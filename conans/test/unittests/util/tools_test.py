@@ -876,6 +876,19 @@ class HelloConan(ConanFile):
         client.save({"conanfile.py": conanfile, "file.txt": "hello\r\n"})
         client.run("create . user/channel")
 
+    @attr('slow')
+    @pytest.mark.slow
+    @attr('local_bottle')
+    def test_flatten_directory(self):
+        client = TestClient()
+        mkdir('path1')
+        mkdir('path1/path2')
+        mkdir('path1/path2/path3')
+        client.save({'path1/path2/path3/test.txt': ''})
+        flattened = tools.flatten_directory(base_path='path1', pattern='*2')
+        self.assertEqual('path2', flattened)
+        self.assertTrue(os.path.exists('path1/path3/test.txt'))
+
 
 class CollectLibTestCase(unittest.TestCase):
 
